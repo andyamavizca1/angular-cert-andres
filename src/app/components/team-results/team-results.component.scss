@@ -1,0 +1,49 @@
+.outer-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+
+  margin-top: 6rem;
+}
+
+.standings-container {
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+.standings-container table {
+  border-collapse: collapse;
+  width: 100%;
+  background-color: #f0f0f0;
+  overflow: hidden;
+}
+
+.standings-container table th,
+.standings-container table td {
+  text-align: center;
+  padding: 8px;
+  border: 1px solid #ccc;
+}
+
+.team-name {
+  &:hover {
+    text-decoration: underline;
+    color: blue;
+    cursor: pointer;
+  }
+}
+
+.back-button {
+  background-color: #006adb;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+
+  margin-top: 0.5rem;
+}
+
+.back-button:hover {
+  background-color: #004da0;
+}

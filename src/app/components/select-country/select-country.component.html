@@ -1,0 +1,16 @@
+
+<div class="container">
+  <h3 class="header">FOOTBALL UPDATES</h3>
+
+  <div class="select-container">
+    <div class="countries-container" *ngIf="countries$ | async as countries">
+      <span *ngFor="let c of countries" id="{{c.id}}Select" (click)="selectCountry(c.id)" [ngClass]="{'selected': c.id === selectedLeagueId}">{{c.country}}</span>
+    </div>
+  </div>
+</div>
+
+<ng-container *ngIf="selectedLeagueId">
+  <div class="outer-standings-container">
+    <app-standings [leagueId]="selectedLeagueId"></app-standings>
+  </div>
+</ng-container>

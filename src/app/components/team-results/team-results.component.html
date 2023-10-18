@@ -1,0 +1,27 @@
+<ng-container *ngIf="resultsData$ | async as resultsData; else loading">
+  <div class="outer-container">
+    <div class="standings-container">
+      <table>
+        <tbody>
+          <ng-container *ngFor="let match of resultsData; let i = index">
+            <tr>
+              <td><img [src]="match.teams.home.logo" alt="Team 1 Logo" width="20" height="20"></td>
+              <td><span class="team-name">{{ match.teams.home.name }}</span></td>
+              <td>{{ match.goals.home }}</td>
+              <td>-</td>
+              <td>{{ match.goals.away }}</td>
+              <td><span class="team-name">{{ match.teams.away.name }}</span></td>
+              <td><img [src]="match.teams.away.logo" alt="Team 2 Logo" width="20" height="20"></td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+
+      <button [routerLink]="['/countries']" class="back-button">Back</button>
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #loading>
+  <app-loading></app-loading>
+</ng-template>

@@ -1,0 +1,42 @@
+
+<ng-container *ngIf="standingsData$ | async as standingsData; else loading">
+  <div class="outer-container">
+    <div class="standings-container">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Logo</th>
+            <th>Name</th>
+            <th>Games</th>
+            <th>W</th>
+            <th>L</th>
+            <th>D</th>
+            <th>Goal Difference</th>
+            <th>Points</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let standings of standingsData.standings; let i = index">
+            <tr>
+              <td>{{ i + 1 }}</td>
+              <td><img [src]="standings.team.logo" alt="Team Logo" width="20" height="20"></td>
+              <td><span class="team-name" (click)="viewTeam(standings.team.id)">{{ standings.team.name }}</span></td>
+              <td>{{ standings.all.played }}</td>
+              <td>{{ standings.all.win }}</td>
+              <td>{{ standings.all.lose }}</td>
+              <td>{{ standings.all.draw }}</td>
+              <td>{{ standings.goalsDiff }}</td>
+              <td>{{ standings.points }}</td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #loading>
+  <app-loading></app-loading>
+</ng-template>
+
