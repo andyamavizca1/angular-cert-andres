@@ -1,7 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, of } from 'rxjs';
-import { Match, FootballService } from 'src/app/services/football.service';
+import { Match, FootballService } from '../../services/football.service';
 
 @Component({
   selector: 'app-team-results',
@@ -23,7 +23,5 @@ export class TeamResultsComponent implements OnInit {
   getResults() {
     if(!this.teamId) return
     this.resultsData$ = this.football.getResults(this.teamId, 10)
-
-    this.resultsData$.subscribe(data => console.log(data))
   }
 }

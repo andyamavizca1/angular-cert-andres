@@ -1,7 +1,7 @@
 import { Component, Input, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { FootballService, StandingsResponse } from 'src/app/services/football.service';
+import { FootballService, StandingsResponse } from '../../services/football.service';
 
 @Component({
   selector: 'app-standings',

@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
-import { League, FootballService } from 'src/app/services/football.service';
+import { FootballService, League } from '../../services/football.service';
 
 @Component({
   selector: 'app-select-country',
