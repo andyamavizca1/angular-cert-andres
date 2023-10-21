@@ -1,82 +1,74 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, map, throwError } from 'rxjs';
-
+import { Observable, map, of, throwError } from 'rxjs';
+import { CacheService } from './cache.service'
+import { Router } from '@angular/router';
 @Injectable({
   providedIn: 'root'
 })
 export class FootballService {
-  private apiKey = 'ffa4654bd6172569843b37576bc0a3f5'
   private apiUrl = 'https://v3.football.api-sports.io'
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private cache: CacheService, private router: Router) { }
 
   public getResults(team: number, last: number): Observable<Match[]> {
 
-    const headers = new HttpHeaders({
-      'x-rapidapi-host': 'v3.football.api-sports.io',
-      'x-rapidapi-key': this.apiKey
-    })
+    const cacheKey = `results_${team}_${last}`
 
-    return this.http.get(`${this.apiUrl}/fixtures?team=${team}&last=${last}`, { headers }).pipe(
+    const cachedData = this.cache.get<Match[]>(cacheKey)
+    if (cachedData) {
+      return of(cachedData)
+    }
+
+    return this.http.get(`${this.apiUrl}/fixtures?team=${team}&last=${last}`).pipe(
       map((data: any) => {
-        return data.response.map((data: any) => data as Match[])
+        if(data && data.response.length) {
+          const matches = data.response.map((data: any) => data as Match[])
+
+          this.cache.set(cacheKey, matches, 1440)
+          return matches
+        } else {
+          this.router.navigate(['/error'])
+          throw new Error('An error has occurred')
+        }
       })
     )
-
-    /* TESTING */
-    /*
-    return this.http.get('assets/mock/fixtures.json').pipe(
-      map((data: any) => {
-        return data.response.map((data: any) => data as Match[])
-      })
-    )
-    */
   }
 
-  public getStandings(league: number): Observable<any> {
+  public getStandings(league: number): Observable<StandingsResponse> {
+
+    const cacheKey = `standings_${league}`
+
+    const cachedData = this.cache.get<StandingsResponse>(cacheKey)
+    if (cachedData) {
+      return of(cachedData)
+    }
+
     const currentYear: number = new Date().getFullYear()
 
-    const headers = new HttpHeaders({
-      'x-rapidapi-host': 'v3.football.api-sports.io',
-      'x-rapidapi-key': this.apiKey
-    })
+    return this.http.get(`${this.apiUrl}/standings?league=${league}&season=${currentYear}`).pipe(
+      map((data: any) => {
 
-    return this.http.get(`${this.apiUrl}/standings?league=${league}&season=${currentYear}`, { headers }).pipe(
-      map((data: any) => {
-        return data && data.response.length ?
-        {
-          league: {
-            country: data.response[0].league.country,
-            flag: data.response[0].league.flag,
-            id: data.response[0].league.id,
-            logo: data.response[0].league.logo,
-            name: data.response[0].league.name,
-          },
-          standings: data.response[0].league.standings[0]
-        } as StandingsResponse
-        : throwError(() => 'An error has occurred')
+        if(data && data.response.length) {
+          const standings = {
+            league: {
+              country: data.response[0].league.country,
+              flag: data.response[0].league.flag,
+              id: data.response[0].league.id,
+              logo: data.response[0].league.logo,
+              name: data.response[0].league.name,
+            },
+            standings: data.response[0].league.standings[0]
+          } as StandingsResponse
+
+          this.cache.set(cacheKey, standings, 1440)
+          return standings
+        } else {
+          this.router.navigate(['/error'])
+          throw new Error('An error has occurred')
+        }
       })
     )
-    /* TESTING */
-    /*
-    return this.http.get('assets/mock/standings.json').pipe(
-      map((data: any) => {
-        return data && data.response.length ?
-        {
-          league: {
-            country: data.response[0].league.country,
-            flag: data.response[0].league.flag,
-            id: data.response[0].league.id,
-            logo: data.response[0].league.logo,
-            name: data.response[0].league.name,
-          },
-          standings: data.response[0].league.standings[0]
-        } as StandingsResponse
-        : throwError(() => 'An error has occurred')
-      })
-    )
-    */
   }
 
   public getCountries(): Observable<League[]> {

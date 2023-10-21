@@ -6,8 +6,10 @@ import { AppComponent } from './app.component';
 import { SelectCountryComponent } from './components/select-country/select-country.component';
 import { StandingsComponent } from './components/standings/standings.component';
 import { TeamResultsComponent } from './components/team-results/team-results.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { LoadingComponent } from './components/loading/loading.component';
+import { ErrorComponent } from './components/error/error.component';
+import { TokenInterceptor } from './interceptors/token.interceptor';
 
 @NgModule({
   declarations: [
@@ -15,14 +17,21 @@ import { LoadingComponent } from './components/loading/loading.component';
     SelectCountryComponent,
     StandingsComponent,
     TeamResultsComponent,
-    LoadingComponent
+    LoadingComponent,
+    ErrorComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
