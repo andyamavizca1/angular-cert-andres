@@ -20,10 +20,10 @@ export class FootballService {
       return of(cachedData)
     }
 
-    return this.http.get(`${this.apiUrl}/fixtures?team=${team}&last=${last}`).pipe(
-      map((data: any) => {
+    return this.http.get<RawFixtureResponse>(`${this.apiUrl}/fixtures?team=${team}&last=${last}`).pipe(
+      map((data: RawFixtureResponse) => {
         if(data && data.response.length) {
-          const matches = data.response.map((data: any) => data as Match[])
+          const matches = data.response.map(data => data as Match)
 
           this.cache.set(cacheKey, matches, 1440)
           return matches
@@ -46,8 +46,8 @@ export class FootballService {
 
     const currentYear: number = new Date().getFullYear()
 
-    return this.http.get(`${this.apiUrl}/standings?league=${league}&season=${currentYear}`).pipe(
-      map((data: any) => {
+    return this.http.get<RawStandingsResponse>(`${this.apiUrl}/standings?league=${league}&season=${currentYear}`).pipe(
+      map((data: RawStandingsResponse) => {
 
         if(data && data.response.length) {
           const standings = {
@@ -76,8 +76,51 @@ export class FootballService {
   }
 }
 
-export interface ResultsResponse {
+export interface ApiError {
+  token: []
+}
 
+export interface RawStandingsResponse {
+  get: string
+  parameters: {
+    league: string
+    season: string
+  }
+  errors: ApiError[]
+  results: number
+  paging: {
+    current: number
+    total: number
+  }
+  response: [
+    { league: {
+      id: number
+      name: string
+      country: string
+      logo: string
+      flag: string
+      season: number
+      round: string
+      standings: [
+        Standing[]
+      ]
+    } }
+  ]
+}
+
+export interface RawFixtureResponse {
+  get: string
+  parameters: {
+    team: string
+    last: string
+  }
+  errors: ApiError[]
+  results: number
+  paging: {
+    current: number
+    total: number
+  }
+  response: Match[]
 }
 
 export interface League {
